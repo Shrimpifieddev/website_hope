@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tiny Puddles</title>
+<meta name="description" content="Tiny Puddles is an upcoming underwater farming sim. You're a shrimp in a puddle: collect seeds, grow them at home, and sell the harvest for hats.">
+<style>
+  :root {
+    /* game palette: the greens, plus its white */
+    --deep: #1c5659;
+    --mid: #2a8379;
+    --green: #66aa5d;
+    --white: #fcfcfc;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  body {
+    background-color: var(--deep);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--white);
+  }
+
+  section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 3px solid var(--white);
+    outline-offset: 4px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+  }
+
+  .hero .subtitle {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 30px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 3px;
+    background-color: var(--green);
+    margin: 0 auto 30px;
+    border-radius: 2px;
+  }
+
+  .hero-box {
+    background-color: var(--white);
+    color: var(--deep);
+    border: 3px solid var(--green);
+    border-radius: 16px;
+    max-width: 520px;
+    width: 100%;
+    padding: 34px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    margin-bottom: 34px;
+  }
+
+  .hero-box p {
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .scroll-hint {
+    font-size: 13px;
+    color: var(--white);
+    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .scroll-hint .arrow {
+    font-size: 18px;
+    animation: bounce 1.6s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* ---------- INFO ---------- */
+  .info {
+    background-color: var(--mid);
+  }
+
+  .section-title {
+    font-size: 30px;
+    margin-bottom: 34px;
+    text-align: center;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 720px;
+    width: 100%;
+    align-items: start;
+  }
+
+  .info-card {
+    background-color: var(--white);
+    color: var(--deep);
+    border: 2px solid var(--green);
+    border-radius: 12px;
+    padding: 22px 22px;
+    min-height: 90px;
+  }
+
+  .info-card h3 {
+    color: var(--deep);
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .info-card p {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 600px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- WISHLIST ---------- */
+  .wishlist-section {
+    min-height: 60vh;
+    text-align: center;
+  }
+
+  .wishlist-section .subtitle {
+    font-size: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .wish-btn {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--mid), var(--deep));
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 16px 46px;
+    border-radius: 50px;
+    border: 2px solid var(--green);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .footer-note {
+    margin-top: 16px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  /* ---------- LINKS TOGGLE LINE ---------- */
+  .links-toggle {
+    background-color: var(--mid);
+    text-align: center;
+  }
+
+  .links-toggle-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 16px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+  }
+
+  .links-toggle-btn .toggle-icon {
+    font-size: 12px;
+    transition: transform 0.25s ease;
+  }
+
+  .links-toggle.open .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .links-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+    background-color: var(--deep);
+    color: var(--white);
+    padding: 0 24px;
+  }
+
+  .links-toggle.open .links-panel {
+    max-height: 1200px;
+    opacity: 1;
+    padding: 8px 24px 26px;
+  }
+
+  .links-list {
+    list-style: none;
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .links-list li {
+    border-bottom: 1px solid var(--mid);
+  }
+
+  .links-list li:last-child {
+    border-bottom: none;
+  }
+
+  .links-groups {
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .links-group-title {
+    font-size: 15px;
+    color: var(--green);
+    margin: 22px 0 2px;
+  }
+
+  .links-groups .links-list {
+    margin: 0;
+    max-width: none;
+  }
+
+  .links-list a {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 16px;
+    padding: 14px 2px;
+    color: var(--white);
+  }
+
+  .links-list .link-name {
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .links-list .link-url {
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--green);
+    text-underline-offset: 4px;
+  }
+
+  .links-list a:hover .link-url {
+    text-decoration-thickness: 3px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer {
+    background-color: var(--deep);
+    border-top: 3px solid var(--green);
+    padding: 18px 24px 26px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--white);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .scroll-hint .arrow { animation: none; }
+    .links-toggle-btn .toggle-icon,
+    .links-panel { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <h1>Tiny Puddles</h1>
+  <p class="subtitle">A tiny underwater farming sim.</p>
+  <div class="divider"></div>
+
+  <div class="hero-box">
+    <p>
+      You're a shrimp in a puddle. Collect seeds, carry them back to your
+      little base, grow them, and sell the harvest to your neighbors for hats.
+    </p>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <span>SCROLL FOR MORE</span>
+    <span class="arrow">&darr;</span>
+  </div>
+</section>
+
+<!-- INFO SECTION -->
+<section class="info">
+  <h2 class="section-title">About the Game</h2>
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Collect Seeds</h3>
+      <p>Swim around the puddle and pick up all the different kinds of seeds.</p>
+    </div>
+    <div class="info-card">
+      <h3>Bring Them Home</h3>
+      <p>Carry your haul back to your little base.</p>
+    </div>
+    <div class="info-card">
+      <h3>Plant &amp; Grow</h3>
+      <p>Plant them, give them time, and gather the fruit of your labor.</p>
+    </div>
+    <div class="info-card">
+      <h3>Sell for Hats</h3>
+      <p>Trade your harvest to the neighbors. They pay in hats.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WISHLIST SECTION -->
+<section class="wishlist-section">
+  <h2 class="section-title">Wishlist</h2>
+  <p class="subtitle">Ready to play? Not quite yet.</p>
+  <!-- TODO: when the store page exists, make this an <a class="wish-btn" href="STORE-URL"> -->
+  <span class="wish-btn">Coming soon</span>
+  <p class="footer-note">The store page isn't live yet.</p>
+</section>
+
+<!-- LINKS TOGGLE LINE -->
+<div class="links-toggle" id="linksToggle">
+  <button class="links-toggle-btn" id="linksToggleBtn" type="button" aria-expanded="false" aria-controls="linksPanel">
+    Links <span class="toggle-icon" aria-hidden="true">&#9660;</span>
+  </button>
+  <div class="links-panel" id="linksPanel">
+    <div class="links-groups">
+      <h3 class="links-group-title">The Game (Tiny Puddles)</h3>
+      <ul class="links-list">
+        <li><a href="https://tinypuddles.vercel.app/" target="_blank" rel="noopener noreferrer"><span class="link-name">Official Website</span><span class="link-url">tinypuddles.vercel.app</span></a></li>
+        <li><a href="https://tinypuddles.fandom.com/wiki/Tinypuddles_Wiki" target="_blank" rel="noopener noreferrer"><span class="link-name">Official Wiki</span><span class="link-url">tinypuddles.fandom.com</span></a></li>
+        <li><a href="https://www.reddit.com/r/Tinypuddle/" target="_blank" rel="noopener noreferrer"><span class="link-name">Game Subreddit</span><span class="link-url">reddit.com/r/Tinypuddle</span></a></li>
+      </ul>
+      <h3 class="links-group-title">The Developer (Shrimpified)</h3>
+      <ul class="links-list">
+        <li><a href="https://www.indiedb.com/members/shrimpified" target="_blank" rel="noopener noreferrer"><span class="link-name">IndieDB Profile</span><span class="link-url">indiedb.com/members/shrimpified</span></a></li>
+        <li><a href="https://www.youtube.com/@shrimpifie_d" target="_blank" rel="noopener noreferrer"><span class="link-name">YouTube Channel</span><span class="link-url">youtube.com/@shrimpifie_d</span></a></li>
+        <li><a href="https://shrimpified.fandom.com/" target="_blank" rel="noopener noreferrer"><span class="link-name">Developer Fandom</span><span class="link-url">shrimpified.fandom.com</span></a></li>
+        <li><a href="https://www.reddit.com/r/Shrimpified/" target="_blank" rel="noopener noreferrer"><span class="link-name">Developer Subreddit</span><span class="link-url">reddit.com/r/Shrimpified</span></a></li>
+      </ul>
+      <h3 class="links-group-title">Infrastructure Tools</h3>
+      <ul class="links-list">
+        <li><a href="https://github.com/maksimtchernov1-source/links/blob/main/links" target="_blank" rel="noopener noreferrer"><span class="link-name">GitHub Storage</span><span class="link-url">github.com/maksimtchernov1-source/links</span></a></li>
+        <li><a href="https://bsky.app/profile/shrimpified-dev.bsky.social" target="_blank" rel="noopener noreferrer"><span class="link-name">Bluesky Profile</span><span class="link-url">bsky.app/profile/shrimpified-dev.bsky.social</span></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  &copy; 2026 Tiny Puddles&trade;
+</footer>
+
+<script>
+  const linksToggle = document.getElementById('linksToggle');
+  const linksToggleBtn = document.getElementById('linksToggleBtn');
+  linksToggleBtn.addEventListener('click', function () {
+    const isOpen = linksToggle.classList.toggle('open');
+    linksToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+</script>
+
+</body>
+</html>
